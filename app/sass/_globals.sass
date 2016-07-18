@@ -1,0 +1,222 @@
+// Globals
+// ~~~~~~~
+
+$red: #ed1b2e
+$dark:  #222222
+$light: #c0c0c0
+
+$bg-col: rgba(128,128,128,0.5)
+
+$paragraph-width: 600px
+
+
+
+@mixin breakpoint($point)
+  // < 550px or 35em.
+  @if $point == small
+    @media (max-width: 600px) 
+      @content
+
+  // > 550px or 35em.
+  @if $point == medium
+    @media (min-width: 600px) 
+      @content
+
+  // > 850px or 53.123em.
+  @if $point == large
+    @media (min-width: 850px) 
+      @content
+
+  // > 1000px or 64em.
+  @if $point == full
+    @media (min-width: 1000px) 
+      @content
+
+
+// Animate ng-hide
+
+.animate.ng-hide-add,
+.animate.ng-hide-remove
+  transition: opacity 500ms linear
+  display: block !important
+
+.animate-fast.ng-hide-add,
+.animate-fast.ng-hide-remove
+  transition: opacity 250ms linear
+  display: block !important
+
+.animate-slow.ng-hide-add,
+.animate-slow.ng-hide-remove
+  transition: opacity 1s linear
+  display: block !important
+
+.animate.ng-hide-add.ng-hide-add-active,
+.animate.ng-hide-remove,
+.animate-fast.ng-hide-add.ng-hide-add-active,
+.animate-fast.ng-hide-remove,
+.animate-slow.ng-hide-add.ng-hide-add-active,
+.animate-slow.ng-hide-remove
+  opacity: 0
+
+.animate.ng-hide-add,
+.animate.ng-hide-remove.ng-hide-remove-active,
+.animate-fast.ng-hide-add,
+.animate-fast.ng-hide-remove.ng-hide-remove-active,
+.animate-slow.ng-hide-add,
+.animate-slow.ng-hide-remove.ng-hide-remove-active
+  opacity: 1
+
+.animate.delay
+  transition-delay: 500ms
+.animate.delay-fast
+  transition-delay: 250ms
+.animate.delay-slow
+  transition-delay: 1s
+
+
+
+@keyframes spinner
+  0%
+    transform: rotate(0deg)
+  50%
+    transform: rotate(180deg)
+  100%
+    transform: rotate(360deg)
+        
+
+// Typography
+// ~~~~~~~~~~
+
+@font-face
+  font-family: 'DINNextLTPro-Light'
+  src: url('fonts/din_28CF13_0_0.eot')
+  src: url('fonts/din_28CF13_0_0.eot?#iefix') format('embedded-opentype'), url('fonts/din_28CF13_0_0.woff') format('woff'), url('fonts/din_28CF13_0_0.ttf') format('truetype')
+  font-weight: normal
+  font-style: normal
+
+$din: 'DINNextLTPro-Light', sans-serif
+$roboto: 'Roboto Condensed', sans-serif
+
+body
+  font-family: $roboto
+
+h1, h2, h3, h4, h5, h6
+  font-family: $din
+
+h1
+  font-size: 2.5em
+
+p
+  font-family: $din
+  font-size: 1.0em
+
+a
+  text-decoration: none
+  p &
+    border-bottom: 1px solid inherit
+
+
+
+
+// Util
+// ~~~~
+
+.ir
+  text-indent: 101%
+  white-space: nowrap
+  overflow: hidden
+
+*
+  padding: 0
+  box-sizing: border-box
+
+  html .clearfix, &:first-child + html .clearfix
+    zoom: 1
+
+.fixed
+  position: fixed
+
+.absolute
+  position: absolute
+
+.is-3d-window-1000
+  width: 100%
+  perspective: 1000px
+  perspective-origin: 50% -50%
+
+
+.tilted-60
+
+  transform-style: preserve-3d
+  transform: translate3d(0,0,-500px) rotateX(90deg)
+
+.tilted-videos
+
+  transform-style: preserve-3d
+  transform: translate3d(200px,-10px,-50px) rotateX(0deg)
+
+.tilted-text
+  transform-style: preserve-3d
+  transform: translate3d(-90px,-30px,0px) rotateX(-90deg)
+
+.preserve-3d
+  transform-style: preserve-3d
+
+.unselectable
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: moz-none
+  -ms-user-select: none
+  user-select: none
+  pointer-events: none
+ul
+  padding: 0px
+  margin: 0px
+  list-style: none
+
+.fill
+  top:    0
+  left:   0
+  right:  0
+  bottom: 0
+  width: 100%
+  height: 100%
+
+// html
+//   width: 100%
+//   height: 100%
+//   // overflow: hidden
+
+
+// body
+//   width: 100%
+//   height: 100%
+//   // overflow: hidden
+//   background: black
+//   color: black
+
+
+.hide
+  display: none
+
+
+
+// SVG Icons
+// ~~~~~~~~~
+
+.icon
+  width: 5em
+  height: 5em
+  padding: 1em
+  cursor: pointer
+
+  &.icon-bg
+    background: $bg-col
+
+  img
+    width: 100%
+    height: 100%
+
+
+

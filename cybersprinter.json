@@ -1,0 +1,12 @@
+{
+	"endscreen" :"UNAUTHORIZED ENTRY DETECTED! --- CLOSING PORT AND FLUSHING SYSTEM",
+	"startscreen": "launching cybersprinter.exe...",
+	"hitwall": "ACCESS DENIED! ---",
+	"codechange": "CODE CHANGE : ",
+	"lb_ready": "Line breaker ready, hold spacebar to run program ",
+	"lb_fire": "launching LINEBREAKER.exe ...",
+	"lb_loading": "@@@-- LINE BREAKER UNAVAILABLE:",
+	 "controls": "CONTROL MANUAL : WASD - SHIFT BLOCKER",
+	 "help":  "this is the help menu"
+
+}

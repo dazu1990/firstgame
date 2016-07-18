@@ -1,0 +1,317 @@
+
+@import normalize
+@import globals
+
+@mixin textGlitch($name, $intensity, $textColor, $background, $highlightColor1, $highlightColor2, $width, $height) 
+	color: $textColor
+	position: relative
+	$steps: $intensity
+	// Ensure the @keyframes are generated at the root level
+	@at-root 
+		// We need two different ones
+		@for $i from 1 through 2 
+			@keyframes #{$name}-anim-#{$i}
+				@for $i from 0 through $steps
+					#{percentage($i*(1/$steps))}
+						clip: rect( random($height)+px, $width+px, random($height)+px, 0 )
+	
+		&:before,
+		&:after 
+			content: attr(data-text)
+			position: absolute
+			top: 0
+			left: 0
+			width: 100%
+			background: $background
+			clip: rect(0, 0, 0, 0)
+		&:after 
+			left: 2px
+			text-shadow: -1px 0 $highlightColor1
+			animation: #{$name}-anim-1 200ms infinite linear alternate-reverse
+		&:before
+			left: -2px
+			text-shadow: 2px 0 $highlightColor2
+			animation: #{$name}-anim-2 300ms infinite linear alternate-reverse
+
+
+
+body
+	background-color: black
+	padding: 0px
+	margin: 0px
+	font-family: 'Courier New'
+	font-size: 14px
+
+
+// Colors
+// **************
+
+$player-colors: (('set0', #297130 , #65F473),('set1', #FF5555 , #000000),('set2', #FF2400 , #000000),('set3', #00AAAA , #AA00AA),('set4', #AA00AA , #AAAAAA),('set5', #AAAAAA , #00AAAA),('set6', #AAAAAA , #AA0000),('set7', #0000FF , #FF00FF),('set8', #BFCE72 , #1A8226),('set9', #0B300E , #65F473),('set10', #65F473 , #0B300E),('set11', #55FFFF , #FF5555),('set12', #0B300E , #297130),('set13', #FF5555 , #55FFFF),('set14', #6D6D48 , #FFDA91),('set15', #FF00FF , #FFFFFF),('set16', #00FF00 , #000000),('set17', #000000 , #BFCE72),('set18', #000000 , #AA5FB6),('set19', #000000 , #FFFFFF),('set20', #000000 , #FF00FF),('set21', #000000 , #55FF55),('set22', #000000 , #6D6D48),('set23', #000000 , #FF5555))
+$burl: 'ftp://ftp.jdpa.ca/design/b'
+$blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
+
+@mixin keyframes($animation-name) 
+	@keyframes #{$animation-name} 
+		@content
+
+
+@mixin animation($str) 
+	animation: #{$str}
+
+@include keyframes(fadeout) 
+	0%  
+		opacity: 1
+		display: initial
+	99%
+		opacity: 0
+	100% 
+		display: none
+
+@include keyframes(onbeat) 
+	0%  
+		transform: scale(1)
+	50%  
+		transform: scale(1.1)
+	100% 
+		transform: scale(1)
+
+@include keyframes(shake) 
+	0%  
+		transform: translateX( 0px)
+	25%  
+		transform: translateX( -5px)
+	50%  
+		transform: translateX( 0px)
+	75%
+		transform: translateX( 5px)
+	100% 
+		transform: translateX( 0px)
+
+@include keyframes(bump-left) 
+	0%  
+		transform: translateX( 0px)
+	50%  
+		transform: translateX( -5px)
+	100% 
+		transform: translateX( 0px)
+
+@include keyframes(bump-right) 
+	0%  
+		transform: translateX( 0px)
+	50%  
+		transform: translateX( 5px)
+	100% 
+		transform: translateX( 0px)
+
+@include keyframes(bump-up) 
+	0%  
+		transform: translateY( 0px)
+	50%  
+		transform: translateY( -5px)
+	100% 
+		transform: translateY( 0px)
+
+@include keyframes(bump-down) 
+	0%  
+		transform: translateY( 0px)
+	50%  
+		transform: translateY( 5px)
+	100% 
+		transform: translateY( 0px)
+
+
+
+// View
+
+// **************
+
+.gamewrapper
+	display: flex
+	width: calc(92.5vh)
+	margin: 0 auto
+	position: relative
+	// height: 100%
+
+
+	@each $label in $player-colors 
+		$l: nth($label, 1)
+		$bg: nth($label, 2)
+		$fg: nth($label, 3)
+		&.#{$l}
+			.glitch
+				@include textGlitch("glitch", 30, $fg, $bg, complement( $fg ), invert($fg), 450, 115)
+			.shake
+				@include animation('shake 200ms 2')
+
+			.overlay
+				background-color: transparent
+				color: $fg !important
+				.start,.end
+					background-color: $bg
+					border: 1px solid $fg
+					// width: 80%
+					input
+						background-color: transparent
+						border: none
+						border-bottom: 1px solid $fg
+						color: $fg !important
+						&:focus
+							outline: none
+			.lifebar
+				border-left: 1px solid $fg
+				.life
+					background: $bg
+					border-bottom: 1px solid $fg
+					&.full
+						background: $fg
+						border-bottom: 1px solid $bg
+
+			#grid
+				background-color: $bg
+				.tile
+					@each $blockerstate in $blocker-states 
+						$bs: nth($blockerstate, 1)
+						$percent: nth($blockerstate, 2)
+						&.#{$bs}
+							background-color: lighten($bg,$percent)
+							&.lower
+								background: linear-gradient(to bottom, lighten($bg,$percent) 0%, #000 100%) 
+								// border-bottom: 1px solid $fg
+							&.lifepoint
+								.inner
+									background-color: $fg
+
+						.inner
+							.text
+								color: $fg
+								&.glitch
+									@include textGlitch("glitch", 30, $fg, $bg, complement( $fg ), invert($fg), 450, 115)
+
+					&.player
+						background-color: $bg 
+						&.lower
+							background: linear-gradient(to bottom, $bg 0%, #000 100%) 
+							.inner
+								background: linear-gradient(to bottom, $fg 0%, #000 100%) 
+						.inner
+							background-color: $fg 
+							
+
+					&.blocker
+						background-color: $fg
+						&.lower
+							background: linear-gradient(to bottom, $fg 0%, #000 100%) 
+	.overlay
+		width: 100%
+		height: 100%
+		position: absolute
+		padding: none
+		margin: 0px
+		z-index: 2
+		text-align: center
+		display: flex
+		justify-content: center
+		align-content: center
+		flex-direction: column
+		&.fadeout
+			@include animation('fadeout 500ms 1')
+
+		.start,.end
+			width: 60%
+			margin: 0 auto
+			position: relative
+			padding: 40px 10px
+			display: none
+			&.active
+				display: block
+			.starttext
+				font-size: 25px
+			input
+				text-align: center
+				text-transform: uppercase
+				font-size: 20px
+	.lifebar
+		// height: 100vh
+		width: 2.5vh
+		margin: 0px
+		padding: 0px
+		.life
+			height: 10vh
+			list-style: none
+			transition: all 300ms
+	#grid
+		max-width: calc(100vw - 2.5vh)
+		width: 90vh
+		height: 100vh
+		// position: absolute
+		padding: none
+		margin: 0px
+		z-index: 0
+		overflow: hidden
+		.tile
+			list-style: none
+			width: 10vh
+			height: 10vh
+			display: inline-block
+			float: left
+			background-position: center
+			background-repeat: no-repeat
+			background-size: cover
+			background-color: transparent 
+			// @include breakpoint(small)
+			// 	width: 10px
+			// 	height: 10px
+			&.lifepoint
+				display: flex
+				justify-content: center
+				align-items: center
+				.inner
+					width: 4vh
+					height: 4vh
+					@include animation('onbeat 500ms infinite')
+
+			&.blocker
+				transition: background-color 250ms
+			&.player
+				padding: 5px
+				display: flex
+				justify-content: center
+				align-content: center
+				transition: background-color 250ms
+				.inner
+					width: calc(90vh/9)
+					height: 8.25vh
+					transition: background-color 250ms
+					@include animation('onbeat 500ms infinite')
+					.text
+						display: none !important
+				&.bump
+					&-right
+						@include animation('bump-right 200ms 1')
+					&-left
+						@include animation('bump-left 200ms 1')
+					&-up
+						@include animation('bump-up 200ms 1')
+					&-down
+						@include animation('bump-down 200ms 1')
+			.inner
+				display: flex
+				justify-content: center
+				align-content: center
+				// &.point
+				// 	border-radius: 100%
+
+				.text
+					display: none
+					font-size: 30px
+					font-weight: bold
+					text-transform: uppercase
+					&.up,&.down,&.left,&.right
+						display: flex
+						height: 10vh
+						width: 100%
+						justify-content: center
+						align-items: center
+
+
+
