@@ -1,6 +1,6 @@
 {
-  "name": "chrome cheetos",
-  "version": "0.0.1",
+  "name": "cybersprint",
+  "version": "1.0.0",
   "authors": [
     "Adrian Davila-Zuniga"
   ],
@@ -9,18 +9,12 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "bower_components"
   ],
   "dependencies": {
-    "angular-animate": "~1.2.26",
-    "angular-route": "~1.2.26",
-    "angular-touch": "~1.2.26",
-    "angularjs": "*",
     "jquery": "~2.1.1",
     "underscore": "~1.6.0",
     "bowser": "~0.7.1",
-    "angular": "~1.2.26"
+    "helios-frame-runner": "*"
   }
 }
