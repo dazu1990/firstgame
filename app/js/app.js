@@ -28,7 +28,7 @@ gm={
 	// this are the tiles that will contain lifepoints
 	lifepoints: [],
 	// number of colour schemes
-	playercolors: 23,
+	playercolors: 22,
 	lastcolor: "",
 	keycodes: [],
 	alphabet: '0123456789abcdefghijklmnopqrstuvwxyz',
