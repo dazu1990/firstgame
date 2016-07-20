@@ -2,6 +2,9 @@
 // - assume we've got jQuery to hand
 var $player;
 var frameRunner = new heliosFrameRunner();
+// var cachedscore = JSON.parse(localStorage.getItem("names"));
+
+
 
 
 gm={
@@ -30,6 +33,7 @@ gm={
 	lifepoints: [],
     //gamescore
     score: 0,
+    highscore: Number(JSON.parse(localStorage.getItem("cybersprinterscore"))) || 0,
 	// number of colour schemes
 	playercolors: 21,
 	lastcolor: "",
@@ -88,6 +92,10 @@ function init() {
 	setkeycodes();
 
 	setgrid();
+
+    if (gm.highscore) {
+       $('#highscore').html(gm.highscore); 
+    };
 
 	$(".cntrlinput").keydown(function(o,i){
 		// map inital player movement gm.keys to input
@@ -523,8 +531,15 @@ function riselife() {
     $('.player').removeClass('lifepoint');
 
     gm.score ++;
-    console.log(gm.score);
+    console.log(gm.score, gm.highscore);
+    if ( gm.score >= gm.highscore) {
+        gm.highscore = gm.score;
+        localStorage.setItem("cybersprinterscore", JSON.stringify(gm.score));
+        $('#highscore').html(gm.score);
+
+    };
     $('#score').html(gm.score);
+
 }
 
 
