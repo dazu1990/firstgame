@@ -35,6 +35,7 @@
 
 
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://use.fontawesome.com/7c57839cb7.js"></script>
 
     <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
 
@@ -43,11 +44,38 @@
 </head>
 
 <body >
-    <div class="gamewrapper set0">
+    <audio controls id="soundtrack">
+      <!-- <source src="horse.ogg" type="audio/ogg"> -->
+      <source src="assets/soundtrack.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+    </audio>
+    <audio controls id="noise">
+      <!-- <source src="horse.ogg" type="audio/ogg"> -->
+      <source src="assets/soundtrack.mp3" type="audio/mpeg">
+    </audio>
+    <div class="gamewrapper ">
         <div class="overlay">
+            <div class="menu">
+                <div id="info">i</div>
+                <h1 id="score">0</h1>
+                <div id="mute" class="fa fa-music active"></div>
+            </div>
             <div class="start active">
                 <h1 class="starttext" data-text="TYPE 4 DIFFERENT LETTERS OR NUMBERS">TYPE 4 <span class="different" data-text="DIFFERENT">DIFFERENT</span> <span class="numberletter" data-text="LETTERS OR NUMBERS">LETTERS OR NUMBERS</span></h1>
                 <input class="cntrlinput" type="text" value="" placeholder="" >
+            </div>
+            <div class="infobox">
+                <h1 class="starttext">CYBER SPRINTER</h1>
+                <p> 
+                    
+                    <ul>
+                        <li>game by Adrian Davila-Zuniga</li>
+                        <li>special thanks to Jordan Armstrong</li>
+                        <li>music by </li>
+                    </ul>
+                    
+                </p>
+              
             </div>
             <div class="end">
                 <h1 class="starttext glitch" data-text="YOU LOST.">YOU LOST. <br> you ran out of life</h1>
@@ -75,13 +103,13 @@
 
     <div id="scripts">
 
-        <script src="../bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/jquery-3.1.0.min/index.js"></script>
      
-        <script src="../bower_components/bowser/bowser.js"></script>
+        <script src="bower_components/bowser/bowser.js"></script>
 
-        <script src="../bower_components/underscore/underscore.js"></script>
+        <script src="bower_components/underscore/underscore.js"></script>
 
-        <script src="../bower_components/helios-frame-runner/helios-frame-runner.js"></script>
+        <script src="bower_components/helios-frame-runner/helios-frame-runner.js"></script>
 
         <script src="js/app.js"></script>
 

@@ -3,60 +3,63 @@
 var $player;
 var frameRunner = new heliosFrameRunner();
 
-gm = {
-    state: "intro",
-    framecount: 0,
-    //this is speed of code change
-    resetkeyint: 200,
-    //this is speed of life loss
-    droplife: 200,
-    //this is speed of falling blocks/game speed
-    blockspeed: 50,
-    resetgridint: 50,
-    totalkeys: (90),
-    //player position
-    playerpos: 76,
-    cntrlpos: { up: false, down: false, left: false, right: false },
-    // left and right movement limits relative to player position
-    playerxlimit: { l: (71 + 1), r: 79 },
-    // base value needed to move player up one row
-    ymove: 9,
-    // all possible xlimits according to grid
-    xarrays: [],
-    // this are the tiles that will be blockers
-    nulltiles: [],
-    // this are the tiles that will contain lifepoints
-    lifepoints: [],
-    // number of colour schemes
-    playercolors: 22,
-    lastcolor: "",
-    keycodes: [],
-    alphabet: '0123456789abcdefghijklmnopqrstuvwxyz',
-    directions: ['up', 'down', 'left', 'right'],
-    keys: {
-        'disabled': false,
-        'active': false,
-        'up': {
-            'press': false
-        },
-        'down': {
-            'press': false
-        },
-        'left': {
-            'press': false
-        },
-        'right': {
-            'press': false
-        }
-    },
+
+gm={
+	state: "intro",
+	framecount: 0,
+	//this is speed of code change
+	resetkeyint: 200,
+	//this is speed of life loss
+	droplife: 200,
+	//this is speed of falling blocks/game speed
+	blockspeed: 50,
+	resetgridint: 50,
+	totalkeys: (90),
+	//player position
+	playerpos: 76,
+	cntrlpos: { up: false, down: false, left: false, right: false},
+	// left and right movement limits relative to player position
+	playerxlimit: {l: (71 + 1), r: 79},
+	// base value needed to move player up one row
+	ymove: 9,
+	// all possible xlimits according to grid
+	xarrays: [],
+	// this are the tiles that will be blockers
+	nulltiles: [],
+	// this are the tiles that will contain lifepoints
+	lifepoints: [],
+    //gamescore
+    score: 0,
+	// number of colour schemes
+	playercolors: 21,
+	lastcolor: "",
+	keycodes: [],
+	alphabet: '0123456789abcdefghijklmnopqrstuvwxyz',
+	directions: ['up','down','left', 'right'],
+	keys: {
+		'disabled': false,
+		'active': false,
+		'up': {
+			'press': false
+		},
+		'down': {
+			'press': false
+		},
+		'left': {
+			'press': false
+		},
+		'right': {
+			'press': false
+		}
+	},
 
 
-    init: init,
-    moveplayer: moveplayer,
-    drawcntrls: drawcntrls,
-    draw: draw,
-    resetgame: resetgame,
-    riselife: riselife,
+	init: init,
+	moveplayer: moveplayer,
+	drawcntrls: drawcntrls,
+	draw: draw,
+	resetgame: resetgame,
+	riselife: riselife,
 }
 
 gm.init();
@@ -71,244 +74,300 @@ frameRunner.add('gmDraw', 'everyFrame', function() {
 
 function init() {
 
-    var values = [];
-    var setvalue = setvalue,
-        setkeycodes = setkeycodes,
-        setgrid = setgrid,
-        cntrlinput = cntrlinput,
-        runvaluechecks = runvaluechecks,
-        setupkeys = setupkeys,
-        setlife = setlife;
 
-    // set up array of key objects that have a letter and keycode
-    setkeycodes();
+	var values = [];
+	var setvalue = setvalue,
+		setkeycodes = setkeycodes,
+		setgrid = setgrid,
+		cntrlinput = cntrlinput,
+		runvaluechecks = runvaluechecks,
+		setupkeys = setupkeys,
+		setlife = setlife;
 
-    setgrid();
+	// set up array of key objects that have a letter and keycode
+	setkeycodes();
 
-    $(".cntrlinput").keydown(function(o, i) {
-        // map inital player movement gm.keys to input
-        cntrlinput();
+	setgrid();
 
-    });
+	$(".cntrlinput").keydown(function(o,i){
+		// map inital player movement gm.keys to input
+		cntrlinput();
+		
+	})
 
-    //this draws the player		
-    gm.moveplayer();
+	//this draws the player		
+	gm.moveplayer();
 
-    // this binds the play movement gm.keys to the movement function
-    setupkeys();
+	// this binds the play movement gm.keys to the movement function
+	setupkeys();
+	setsoundtrack();
+	setinfobtn();
 
-    function setkeycodes() {
-        // for total amount of gm.keys assign a key code to that key
+	function setinfobtn() {
+		var previous = false;
+		var prevstate = false;
 
-        for (var i = 0; i < 48; i++) {
-            var code = (i + 48);
-            if (code < 58 || code > 64 && code < 91) {
-                gm.keycodes.push({
-                    'letter': String.fromCharCode(i + 48),
-                    'code': code
-                });
-            };
+		
+		$('#info').click(function(){
+			console.log('test', previous);
 
-        };
-    }
+			
+			if ( $('.start').hasClass('active') && !previous) {
+				previous = 'start';
+			}else if( $('.end').hasClass('active') && !previous){
+				previous = 'end';
+			}
 
-    function setgrid() {
-        //set up grid
-        gm.directions = ['up', 'down', 'left', 'right']
-        for (var i = gm.totalkeys; i >= 0; i--) {
-            var tileclass = '';
-            if (i < (1 + gm.ymove)) {
-                tileclass = 'lower';
-            };
-            $('#grid').append('<li class="tile ' + tileclass + '" id="tile' + i +
-                '"><div class="inner">' +
-                '<span class="text"></span>' +
-                '</div></li>');
-        };
+			$('.infobox').toggleClass('active')
+			if (previous) {
+				$('.'+previous).toggleClass('active')
+				// previous = false;
+			}
+			if (gm.state !== 'pause') {
+				prevstate = gm.state
+				gm.state = 'pause';
+			}else{
+				gm.state = prevstate;
+			}
+		})
+	}
 
-        for (var i = 0; i < 10; i++) {
-            gm.xarrays.push([i * gm.ymove, ((i * gm.ymove) + gm.ymove - 1)])
-        };
-    }
+	function setsoundtrack(){
+		// var audio = new Audio('assets/soundtrack.mp3');
+		// audio.play();
 
-    function setvalue(letter) {
-        //this applys the chosen values from the intro screen to the movement gm.keys
-        gm.keys.disabled = false;
-        values.push(letter);
+		// var sound = new Audio('../assets/soundtrack.mp3');
+		// sound.play();
 
-        switch (values.length) {
+		var soundtrack = document.getElementById('soundtrack');
+		soundtrack.autoplay = true;
+		soundtrack.loop = true;
+		soundtrack.load();
+		soundtrack.volume = 0.075;
 
-            case 1:
-                var key = _.findWhere(gm.keycodes, { "letter": values[0] })
-                gm.keys.up.letter = values[0];
-                gm.keys.up.code = key.code;
-                break;
-
-            case 2:
-                var key = _.findWhere(gm.keycodes, { "letter": values[1] })
-                gm.keys.down.letter = values[1];
-                gm.keys.down.code = key.code;
-                break;
-
-            case 3:
-                var key = _.findWhere(gm.keycodes, { "letter": values[2] })
-                gm.keys.left.letter = values[2];
-                gm.keys.left.code = key.code;
-                break;
-
-            case 4:
-                var key = _.findWhere(gm.keycodes, { "letter": values[3] })
-                gm.keys.right.letter = values[3];
-                gm.keys.right.code = key.code;
-                break;
-        }
-    }
-
-    function runvaluechecks(letter) {
-        //this reg expression checks if string is alphanumeric
-        var reg = /[^A-Za-z0-9 ]/;
-        var targetclass;
+		$('#mute').click(function(){
+			console.log('test');
+			soundtrack.muted = !soundtrack.muted;
+			// soundtrack.volume = 0;
+		})
 
 
-        if (reg.test(letter) || letter === " ") {
-            targetclass = '.numberletter';
-        } else if (_.contains(values, letter)) {
-            targetclass = '.different';
-        }
+	}
 
-        if (targetclass) {
-            //this adds animation to the appropriate text if the input value is a repeat or a not alphanumeric
 
-            gm.keys.disabled = true;
-            $(targetclass).addClass('glitch');
-            $('.cntrlinput').addClass('shake');
-            setTimeout(function() {
-                $('.cntrlinput').removeClass('shake');
-            }, 200);
-            setTimeout(function() {
-                $(targetclass).removeClass('glitch');
-            }, 500);
-            return false;
+	function setkeycodes(){
+		// for total amount of gm.keys assign a key code to that key
 
-        } else {
-            // if input passes checks add value to keycodes
-            return true;
-            // console.log(values);
-        }
+		for (var i = 0; i < 48; i++ ){
+			var code = (i + 48);
+			if (code < 58 || code > 64 && code < 91) {
+				gm.keycodes.push({
+					'letter':  String.fromCharCode(i + 48),
+					'code': code
+				});
+			};
+			
+		};
+	}
 
-    }
+	function setgrid(){
+		//set up grid
+		gm.directions = ['up','down','left', 'right']
+		for (var i = gm.totalkeys; i >= 0; i--) {
+			var tileclass = '';
+			if (i < (1 + gm.ymove)) {
+				tileclass = 'lower';
+			};
+			$('#grid').append('<li class="tile '+tileclass+'" id="tile'+i+
+				'"><div class="inner">'+
+					'<span class="text"></span>'+
+				'</div></li>');
+		};
 
-    function cntrlinput() {
-        var letter = String.fromCharCode(event.which)
-        letter = letter.toUpperCase();
+		for (var i = 0; i < 10; i++) {
+			gm.xarrays.push([ i*gm.ymove, ((i*gm.ymove) + gm.ymove - 1)])
+		};
+		$('.gamewrapper').addClass('set'+_.random( 0, gm.playercolors ));
+	}
+	
 
-        if (values.length === 3) {
-            // on the last key stroke set the letter and start the game
-            // setvalue(letter);
-            if (runvaluechecks(letter)) {
-                setvalue(letter)
-                $('.starttext').addClass('glitch');
-                setTimeout(function() {
-                    setlife();
-                    $('.start').removeClass('active');
-                    $('.overlay').addClass('fadeout');
-                    setTimeout(function() {
-                        gm.state = "play";
-                        gm.resetgridint = gm.framecount + gm.blockspeed;
-                        gm.resetkeyint = gm.framecount + gm.blockspeed + 300;
+	function setvalue(letter){
+		//this applys the chosen values from the intro screen to the movement gm.keys
+		gm.keys.disabled = false;
+		values.push(letter);
 
-                        gm.moveplayer();
-                    }, 1000)
-                }, 800);
-            } else {
-                return false;
-            }
+		switch(values.length) {
 
-            // return false;
-        } else {
+		    case 1:
+		    	var key = _.findWhere(gm.keycodes,{"letter" : values[0]})
+		    	gm.keys.up.letter = values[0];
+		    	gm.keys.up.code = key.code;
+		        break;
 
-            // if input passes checks add value to keycodes
-            if (runvaluechecks(letter)) {
-                setvalue(letter)
-            } else {
-                return false;
-            }
-        }
-    }
+		    case 2:
+		    	var key = _.findWhere(gm.keycodes,{"letter" : values[1]})
+		    	gm.keys.down.letter = values[1];
+		    	gm.keys.down.code = key.code;
+		        break;
 
-    function setlife() {
-        var setdelay = function(i) {
-            setTimeout(function() {
-                $('#life' + i).addClass('full')
-            }, 100 * i)
+		    case 3:
+		    	var key = _.findWhere(gm.keycodes,{"letter" : values[2]})
+		    	gm.keys.left.letter = values[2];
+		    	gm.keys.left.code = key.code;
+		        break;
+		        
+		    case 4:
+		    	var key = _.findWhere(gm.keycodes,{"letter" : values[3]})
+		    	gm.keys.right.letter = values[3];
+		    	gm.keys.right.code = key.code;
+		        break;
+		}
+	}
+	function runvaluechecks(letter){
+		//this reg expression checks if string is alphanumeric
+		var reg = /[^A-Za-z0-9 ]/;
+		var targetclass;
 
-        }
-        for (var i = 0; i < 10; i++) {
-            setdelay(i);
-        };
-    }
 
-    function setupkeys() {
-        // this sets up the inital key mapping
-        $(window).keydown(function(event) {
-            gm.keys.active = true;
-            if (!gm.inputfocused) {
-                //W up
-                if (event.which == gm.keys.up.code) {
-                    gm.keys.up.press = true;
-                    // event.preventDefault();
-                }
-                //A down
-                if (event.which == gm.keys.down.code) {
-                    gm.keys.down.press = true;
-                    // event.preventDefault();
-                }
-                //S left 
-                if (event.which == gm.keys.left.code) {
-                    gm.keys.left.press = true;
-                    // event.preventDefault();
-                }
-                //D right
-                if (event.which == gm.keys.right.code) {
-                    gm.keys.right.press = true;
-                    // event.preventDefault();
-                }
-            };
+		if(reg.test(letter) || letter === " "){
+			targetclass = '.numberletter';
+		}else if ( _.contains(values, letter)) {
+			targetclass = '.different';
+		}
 
-        });
-        $(window).keyup(function(event) {
-            gm.keys.active = false;
-            if (!gm.inputfocused) {
-                //W up
-                if (event.which == gm.keys.up.code) {
-                    gm.keys.up.press = false;
-                    gm.moveplayer('up');
+		if(targetclass){
+			//this adds animation to the appropriate text if the input value is a repeat or a not alphanumeric
 
-                    // event.preventDefault();
-                }
-                //A down
-                if (event.which == gm.keys.down.code) {
-                    gm.keys.down.press = false;
-                    gm.moveplayer('down');
+			gm.keys.disabled = true;
+			$(targetclass).addClass('glitch');
+			$('.cntrlinput').addClass('shake');
+			setTimeout(function() {
+				$('.cntrlinput').removeClass('shake');
+			}, 200);
+			setTimeout(function() {
+				$(targetclass).removeClass('glitch');
+			}, 500);
+			return false;
 
-                    // event.preventDefault();
-                }
-                //S left 
-                if (event.which == gm.keys.left.code) {
-                    gm.keys.left.press = false;
-                    gm.moveplayer('left');
+		}else{
+			// if input passes checks add value to keycodes
+			return true;
+			// console.log(values);
+		}
 
-                    // event.preventDefault();
-                }
-                //D right
-                if (event.which == gm.keys.right.code) {
-                    gm.keys.right.press = false;
-                    gm.moveplayer('right');
-                    // event.preventDefault();
-                }
-            };
-        });
-    };
+	}
+	function cntrlinput(){
+		var letter = String.fromCharCode(event.which)
+		letter  = letter.toUpperCase();
+
+		if (values.length === 3) {
+			// on the last key stroke set the letter and start the game
+			// setvalue(letter);
+			if (runvaluechecks(letter)) {
+				setvalue(letter)
+				$('.starttext').addClass('glitch');
+				setTimeout(function() {
+					setlife();
+					$('.start').removeClass('active');
+					$('.overlay').addClass('fadeout');
+					setTimeout(function(){
+
+						//GAME STARTS HERE!!!!
+						gm.state = "play";
+						gm.resetgridint = gm.framecount + gm.blockspeed;
+						gm.resetkeyint = gm.framecount + gm.blockspeed + 300;
+						gm.droplife = gm.framecount +  200;
+
+						gm.moveplayer();
+					},1000)
+				}, 800);
+			}else{
+				return false;
+			}
+			
+		    // return false;
+		}else{
+			
+			// if input passes checks add value to keycodes
+			if (runvaluechecks(letter)) {
+				setvalue(letter)
+			}else{
+				return false;
+			}
+		}
+	}
+	function setlife () {
+		var setdelay = function(i){
+			setTimeout(function(){
+				$('#life'+i).addClass('full')
+			},100*i)
+
+		}
+		for (var i = 0; i < 10; i++) {
+			setdelay(i);
+		};
+	}
+	function setupkeys(){
+		// this sets up the inital key mapping
+		$( window ).keydown(function( event ) {
+			gm.keys.active= true;
+			if (!gm.inputfocused) {
+				//W up
+				if ( event.which == gm.keys.up.code  ) {
+					gm.keys.up.press = true;
+					// event.preventDefault();
+				}
+				//A down
+				if ( event.which == gm.keys.down.code  ) {
+					gm.keys.down.press = true;
+					// event.preventDefault();
+				}
+				//S left 
+				if ( event.which == gm.keys.left.code ) {
+					gm.keys.left.press = true;
+					// event.preventDefault();
+				}
+				//D right
+				if ( event.which == gm.keys.right.code  ) {
+					gm.keys.right.press = true;
+					// event.preventDefault();
+				}
+			};
+			
+		});
+		$( window ).keyup(function( event ) {
+			gm.keys.active = false;
+			if (!gm.inputfocused) {
+				//W up
+				if ( event.which == gm.keys.up.code ) {
+					gm.keys.up.press = false;
+					gm.moveplayer('up');
+
+					// event.preventDefault();
+				}
+				//A down
+				if ( event.which == gm.keys.down.code ) {
+					gm.keys.down.press = false;
+					gm.moveplayer('down');
+
+					// event.preventDefault();
+				}
+				//S left 
+				if ( event.which == gm.keys.left.code ) {
+					gm.keys.left.press = false;
+					gm.moveplayer('left');
+
+					// event.preventDefault();
+				}
+				//D right
+				if ( event.which == gm.keys.right.code ) {
+					gm.keys.right.press = false;
+					gm.moveplayer('right');
+					// event.preventDefault();
+				}
+			};
+		});
+	};
 };
 
 function moveplayer(direction) {
@@ -462,6 +521,10 @@ function riselife() {
     // console.log('riselife!', $('.life').not('.life.full').last())
     $('.life').not('.life.full').last().addClass('full');
     $('.player').removeClass('lifepoint');
+
+    gm.score ++;
+    console.log(gm.score);
+    $('#score').html(gm.score);
 }
 
 
@@ -533,208 +596,223 @@ function resetgame() {
 
 
 
-
-function draw(argument) {
-    var cyclebg = cyclebg,
-        resetcodes = resetcodes,
-        drawlifepoint = drawlifepoint,
-        movegrid = movegrid;
-
-
-    gm.framecount = frameRunner.frameCount();
-
-    if (gm.framecount >= gm.droplife && gm.state === "play" && gm.framecount > 500) {
-        lowerlife();
-    };
-
-    if (gm.framecount >= gm.resetkeyint && gm.state === "play") {
-        resetcodes();
-        drawlifepoint();
-    };
-
-    if (gm.framecount === gm.resetgridint && gm.state === "play") {
-        movegrid();
-        cyclebg();
-    } else if (gm.framecount === gm.resetgridint) {
-        cyclebg();
-    }
-
-    function drawlifepoint() {
-        // console.log('running drawlifepoint', $('.lifepoint').length)
-        var nonblockers = [];
-        //clear all lifepoints
-        $('.lifepoint').removeClass('lifepoint');
-
-        for (var i = gm.totalkeys; i >= 0; i--) {
-            var tile = $('.tile').eq(i);
-            if (!tile.hasClass('blocker') && !tile.hasClass('player') && !tile.hasClass('lifpoint')) {
-                nonblockers.push(i)
-            }
-        };
-        var tileindex = _.random(0, (nonblockers.length - 1))
-        $('.tile').eq(nonblockers[tileindex]).addClass('lifepoint');
-
-    }
+function draw  (argument) {
+	var cyclebg = cyclebg,
+		resetcodes = resetcodes,
+		drawlifepoint = drawlifepoint,
+		movegrid = movegrid;
 
 
+	gm.framecount = frameRunner.frameCount();
 
-    function lowerlife() {
-        $('.life.full').eq(0).removeClass('full');
-        if ($('.life.full').length === 0) {
-            gm.resetgame();
-        };
-        gm.droplife = gm.droplife + 200;
-    }
+	if (gm.framecount >= gm.droplife && gm.state === "play" && gm.framecount > 500) {
+		lowerlife();
+	};
 
-    function cyclebg() {
-        var mdletters = ['ba', 'bb', 'bc', 'bd', 'be']
-        _.each(mdletters, function(o, i) {
-            $('.tile').removeClass(o);
-        })
+	if (gm.framecount >= gm.resetkeyint && gm.state === "play") {
+		resetcodes();
+		drawlifepoint();
+	};
 
-        for (var i = 0; i < gm.totalkeys; i++) {
-            var randletter = mdletters[_.random(0, (mdletters.length - 1))];
-            $('.tile').eq(i).addClass(randletter);
-        };
+	if (gm.framecount === gm.resetgridint && gm.state === "play") {
+		movegrid();
+		cyclebg();
+	}else if(gm.framecount === gm.resetgridint ){
+		cyclebg();
+	}
 
-        gm.resetgridint = gm.resetgridint + gm.blockspeed;
-    };
+	function drawlifepoint () {
+		// console.log('running drawlifepoint', $('.lifepoint').length)
+		var nonblockers = [];
+		//clear all lifepoints
 
-    function movegrid() {
-        var ispastmid = false;
-        var movedown = movedown;
+		if ($('.lifepoint').length == 2) {
+			$('.lifepoint').eq(1).removeClass('lifepoint');
+		}
+		
 
-        // ███╗   ███╗ ██████╗ ██╗   ██╗███████╗     ██████╗ ██████╗ ██╗██████╗ 
-        // ████╗ ████║██╔═══██╗██║   ██║██╔════╝    ██╔════╝ ██╔══██╗██║██╔══██╗
-        // ██╔████╔██║██║   ██║██║   ██║█████╗      ██║  ███╗██████╔╝██║██║  ██║
-        // ██║╚██╔╝██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║   ██║██╔══██╗██║██║  ██║
-        // ██║ ╚═╝ ██║╚██████╔╝ ╚████╔╝ ███████╗    ╚██████╔╝██║  ██║██║██████╔╝
-        // ╚═╝     ╚═╝ ╚═════╝   ╚═══╝  ╚══════╝     ╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝ 
+		for (var i = gm.totalkeys; i >= 0; i--) {
+			var tile = $('.tile').eq(i);
+			if (!tile.hasClass('blocker') && !tile.hasClass('player') && !tile.hasClass('lifpoint')) {
+				nonblockers.push(i)
+			}
+		};
+		var tileindex = _.random(0, (nonblockers.length - 1)) 
+		$('.tile').eq(nonblockers[tileindex]).addClass('lifepoint');		
+		
+	}
 
-        _.each(gm.nulltiles, function(o, i) {
-            // if any o f the blockers are past the midpoint of the grid, set past mid
-            if (o > 31 && !ispastmid) {
-                ispastmid = true;
-            }
-        })
-        if (gm.nulltiles.length === 0 || ispastmid) {
-            //if there are no blockers or blockers are past the midpoint then create a new blocker
+	
 
-            for (var i = _.random(0, 7); i >= 0; i--) {
-                var push = _.random(0, 1);
-                if (push) {
-                    gm.nulltiles.push(i)
-                };
-            };
+	function lowerlife () {
+		console.log('lower');
+		$('.life.full').eq(0).removeClass('full');
+		if ($('.life.full').length === 0) {
+			gm.resetgame();
+		};
+		gm.droplife = gm.droplife + 200;
+	}
 
-            _.each(gm.nulltiles, function(o, i) {
-                $('.tile').eq(o).addClass('blocker ');
-            });
+	function cyclebg(){
+		var mdletters = ['ba','bb','bc','bd','be']
+		_.each(mdletters, function(o,i){
+			$('.tile').removeClass(o);
+		})
 
-            movedown();
+		for (var i = 0; i < gm.totalkeys; i++) {
+			var randletter =  mdletters[ _.random(0, (mdletters.length - 1)) ];
+			$('.tile').eq(i).addClass( randletter);
+		};
 
-        } else {
+		gm.resetgridint = gm.resetgridint + gm.blockspeed;
+	};
 
-            movedown();
+	function movegrid() {
+		var ispastmid = false;
+		var movedown = movedown;
+
+		// ███╗   ███╗ ██████╗ ██╗   ██╗███████╗     ██████╗ ██████╗ ██╗██████╗ 
+		// ████╗ ████║██╔═══██╗██║   ██║██╔════╝    ██╔════╝ ██╔══██╗██║██╔══██╗
+		// ██╔████╔██║██║   ██║██║   ██║█████╗      ██║  ███╗██████╔╝██║██║  ██║
+		// ██║╚██╔╝██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║   ██║██╔══██╗██║██║  ██║
+		// ██║ ╚═╝ ██║╚██████╔╝ ╚████╔╝ ███████╗    ╚██████╔╝██║  ██║██║██████╔╝
+		// ╚═╝     ╚═╝ ╚═════╝   ╚═══╝  ╚══════╝     ╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝ 
+
+		_.each(gm.nulltiles,function(o,i){
+			// if any o f the blockers are past the midpoint of the grid, set past mid
+			if(o > 31 && !ispastmid){
+				ispastmid = true;
+			}
+		})
+		if (gm.nulltiles.length === 0 || ispastmid) {
+			//if there are no blockers or blockers are past the midpoint then create a new blocker
+
+			for (var i = _.random(0,7); i >= 0; i--) {
+				var push =  _.random(0,1);
+				if (push) {
+					gm.nulltiles.push( i )
+				};
+			};
+
+			_.each(gm.nulltiles,function(o,i){
+				$('.tile').eq(o).addClass('blocker ');
+			});
+			
+			movedown ();
+			
+		}else{ 
+			
+			movedown ();
+		}
+		if ( $('.player.blocker').length > 0 ) {
+			//when a player is blocked they get pushed down one row
+			gm.moveplayer("down");
+
+			if (gm.playerpos > (gm.totalkeys - gm.ymove)) {
+				gm.resetgame();
+			};
+		}
+
+		function movedown () {
+			//this moves all the blockers down
+
+			$('.blocker').removeClass('blocker');
+			
+			_.each(gm.nulltiles,function(o,i){
+				$('.tile').eq(o).addClass('blocker ');
+			});
+
+			var blockstoremove = [];
+			_.each(gm.nulltiles,function(o,i){
+				gm.nulltiles[i] = o + gm.ymove;
+				if (gm.nulltiles[i] >= gm.totalkeys + 1) {
+					blockstoremove.push(i)
+				};
+			});
+
+			_.each(blockstoremove,function(o,i){
+				gm.nulltiles.splice(o, 1);
+			})
+		}
+	};
+
+
+	function resetcodes() {
+		console.log('reset code');
+
+	// ██████╗ ███████╗███████╗███████╗████████╗    ██╗  ██╗███████╗██╗   ██╗███████╗
+	// ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝    ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝
+	// ██████╔╝█████╗  ███████╗█████╗     ██║       █████╔╝ █████╗   ╚████╔╝ ███████╗
+	// ██╔══██╗██╔══╝  ╚════██║██╔══╝     ██║       ██╔═██╗ ██╔══╝    ╚██╔╝  ╚════██║
+	// ██║  ██║███████╗███████║███████╗   ██║       ██║  ██╗███████╗   ██║   ███████║
+	// ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝       ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝
+	                                                                              
+		// this color from list and remove any remaining colors from tiles. add color class to player-----------------------------------------------
+
+		
+		var setkey = setkey;
+		// var animatekey = animatekey;
+		var newcolor = _.random( 0, gm.playercolors );
+		var direction = gm.directions[_.random(0,3)],
+			//select a direction at random 
+			keytochange = gm.keys[ direction ],
+			//swap the code for the direction with a random code from the key array - > gm.keycodes
+			randomkeyindex =  _.random(0,gm.keycodes.length - 1),
+			isrepeat = _.where(gm.keys, {letter: gm.keycodes[ randomkeyindex ].letter} || {code: gm.keycodes[ randomkeyindex ].code} );
+
+		for (var i = 0; i < gm.playercolors + 1; i++) {
+			$('.gamewrapper').removeClass('set'+i);
+			if ($('.tile.set'+i)) {
+				gm.lastcolor =  i;
+				$('.tile.set'+i).removeClass('set'+i);
+			};
+		};
+
+		gm.lastcolor =  newcolor;
+		$('.gamewrapper').addClass('set'+newcolor);
+		setkey();
+
+		// this resets intval for new code switch
+
+		gm.resetkeyint = gm.resetkeyint + gm.blockspeed + 300;
+
+		
+		for (var i = 0; i < 50; i++) { 
+            if (i < 49) {
+                
+                setTimeout(function() {
+                    var randomletter = gm.keycodes[  _.random( 0, gm.keycodes.length - 1) ].letter;
+                    $('.tile .inner .text.'+direction).html(randomletter)
+                }, 10*i)  
+            }else{
+                setTimeout(function() {
+                    console.log('t1est');
+                    _.each(gm.directions, function(o,i){
+                        $('.tile .inner .text.'+o).html(gm.keys[o].letter);
+                    })
+                }, 10*i)
+            }   
+                      
         }
-        if ($('.player.blocker').length > 0) {
-            //when a player is blocked they get pushed down one row
-            gm.moveplayer("down");
 
-            if (gm.playerpos > (gm.totalkeys - gm.ymove)) {
-                gm.resetgame();
-            };
-        }
-
-        function movedown() {
-            //this moves all the blockers down
-
-            $('.blocker').removeClass('blocker');
-
-            _.each(gm.nulltiles, function(o, i) {
-                $('.tile').eq(o).addClass('blocker ');
-            });
-
-            var blockstoremove = [];
-            _.each(gm.nulltiles, function(o, i) {
-                gm.nulltiles[i] = o + gm.ymove;
-                if (gm.nulltiles[i] >= gm.totalkeys + 1) {
-                    blockstoremove.push(i)
-                };
-            });
-
-            _.each(blockstoremove, function(o, i) {
-                gm.nulltiles.splice(o, 1);
-            })
-        }
-    };
+		$('.tile .inner .text.'+direction).addClass("glitch")
+		setTimeout(function() {
+			$('.tile .inner .text.'+direction).removeClass("glitch")
+		}, 1000);
 
 
-    function resetcodes() {
-
-        // ██████╗ ███████╗███████╗███████╗████████╗    ██╗  ██╗███████╗██╗   ██╗███████╗
-        // ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝    ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝
-        // ██████╔╝█████╗  ███████╗█████╗     ██║       █████╔╝ █████╗   ╚████╔╝ ███████╗
-        // ██╔══██╗██╔══╝  ╚════██║██╔══╝     ██║       ██╔═██╗ ██╔══╝    ╚██╔╝  ╚════██║
-        // ██║  ██║███████╗███████║███████╗   ██║       ██║  ██╗███████╗   ██║   ███████║
-        // ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝       ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝
-
-        // this color from list and remove any remaining colors from tiles. add color class to player-----------------------------------------------
-
-        var newcolor = _.random(0, gm.playercolors);
-
-        var direction = gm.directions[_.random(0, 3)],
-            //select a direction at random 
-            keytochange = gm.keys[direction],
-            //swap the code for the direction with a random code from the key array - > gm.keycodes
-            randomkeyindex = _.random(0, gm.keycodes.length - 1),
-            isrepeat = _.where(gm.keys, { letter: gm.keycodes[randomkeyindex].letter } || { code: gm.keycodes[randomkeyindex].code });
-        console.log('isrepeat', isrepeat, gm.keys, gm.keycodes[randomkeyindex].letter, gm.keycodes[randomkeyindex].code);
-
-        var setkey = setkey;
-
-
-        for (var i = 0; i < gm.playercolors + 1; i++) {
-            $('.gamewrapper').removeClass('set' + i);
-            if ($('.tile.set' + i)) {
-                gm.lastcolor = i;
-                $('.tile.set' + i).removeClass('set' + i);
-            };
-        };
-
-        gm.lastcolor = newcolor;
-
-        $('.gamewrapper').addClass('set' + newcolor);
-
-
-
-        setkey();
-
-        // this resets intval for new code switch
-
-        gm.resetkeyint = gm.resetkeyint + gm.blockspeed + 300;
-
-        _.each(gm.directions, function(o, i) {
-            $('.tile .inner .text.' + o).html(gm.keys[o].letter);
-        })
-
-        $('.tile .inner .text.' + direction).addClass("glitch")
-        setTimeout(function() {
-            $('.tile .inner .text.' + direction).removeClass("glitch")
-        }, 1000);
-
-        function setkey() {
-            // this checks if the new code is being used
-            if (isrepeat.length > 0) {
-                randomkeyindex = _.random(0, gm.keycodes.length - 1);
-                isrepeat = _.where(gm.keys, { letter: gm.keycodes[randomkeyindex].letter });
-                setkey();
-            } else {
-                keytochange.letter = gm.keycodes[randomkeyindex].letter;
-                keytochange.code = gm.keycodes[randomkeyindex].code;
-                return;
-            }
-        }
-    };
+		function setkey(){
+			// this checks if the new code is being used
+			if (isrepeat.length > 0) {
+				randomkeyindex =  _.random(0,gm.keycodes.length - 1);
+				isrepeat = _.where(gm.keys, {letter: gm.keycodes[ randomkeyindex ].letter});
+				setkey();
+			}else{
+				keytochange.letter = gm.keycodes[ randomkeyindex ].letter;
+				keytochange.code = gm.keycodes[ randomkeyindex ].code;
+				return;
+			}
+		}
+	};
 
 };

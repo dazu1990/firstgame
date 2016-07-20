@@ -1,7 +1,7 @@
 var gulp         = require('gulp'),
     gutil        = require('gulp-util'),
     compass      = require('gulp-compass'),
-    sass         = require('gulp-ruby-sass'),
+    sass         = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
     minifycss    = require('gulp-minify-css'),
     jshint       = require('gulp-jshint'),
