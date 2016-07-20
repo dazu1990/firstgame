@@ -28,7 +28,7 @@ gm={
 	// this are the tiles that will contain lifepoints
 	lifepoints: [],
 	// number of colour schemes
-	playercolors: 22,
+	playercolors: 21,
 	lastcolor: "",
 	keycodes: [],
 	alphabet: '0123456789abcdefghijklmnopqrstuvwxyz',
@@ -97,6 +97,59 @@ function init() {
 
 	// this binds the play movement gm.keys to the movement function
 	setupkeys();
+	setsoundtrack();
+	setinfobtn();
+
+	function setinfobtn() {
+		var previous = false;
+		var prevstate = false;
+
+		
+		$('#info').click(function(){
+			console.log('test', previous);
+
+			
+			if ( $('.start').hasClass('active') && !previous) {
+				previous = 'start';
+			}else if( $('.end').hasClass('active') && !previous){
+				previous = 'end';
+			}
+
+			$('.infobox').toggleClass('active')
+			if (previous) {
+				$('.'+previous).toggleClass('active')
+				// previous = false;
+			}
+			if (gm.state !== 'pause') {
+				prevstate = gm.state
+				gm.state = 'pause';
+			}else{
+				gm.state = prevstate;
+			}
+		})
+	}
+
+	function setsoundtrack(){
+		// var audio = new Audio('assets/soundtrack.mp3');
+		// audio.play();
+
+		// var sound = new Audio('../assets/soundtrack.mp3');
+		// sound.play();
+
+		var soundtrack = document.getElementById('soundtrack');
+		soundtrack.autoplay = true;
+		soundtrack.loop = true;
+		soundtrack.load();
+		soundtrack.volume = 0.075;
+
+		$('#mute').click(function(){
+			console.log('test');
+			soundtrack.muted = !soundtrack.muted;
+			// soundtrack.volume = 0;
+		})
+
+
+	}
 
 
 	function setkeycodes(){
@@ -131,6 +184,7 @@ function init() {
 		for (var i = 0; i < 10; i++) {
 			gm.xarrays.push([ i*gm.ymove, ((i*gm.ymove) + gm.ymove - 1)])
 		};
+		$('.gamewrapper').addClass('set'+_.random( 0, gm.playercolors ));
 	}
 	
 
@@ -214,9 +268,12 @@ function init() {
 					$('.start').removeClass('active');
 					$('.overlay').addClass('fadeout');
 					setTimeout(function(){
+
+						//GAME STARTS HERE!!!!
 						gm.state = "play";
 						gm.resetgridint = gm.framecount + gm.blockspeed;
 						gm.resetkeyint = gm.framecount + gm.blockspeed + 300;
+						gm.droplife = gm.framecount +  200;
 
 						gm.moveplayer();
 					},1000)
@@ -561,7 +618,11 @@ function draw  (argument) {
 		// console.log('running drawlifepoint', $('.lifepoint').length)
 		var nonblockers = [];
 		//clear all lifepoints
-		$('.lifepoint').removeClass('lifepoint');
+
+		if ($('.lifepoint').length == 2) {
+			$('.lifepoint').eq(1).removeClass('lifepoint');
+		}
+		
 
 		for (var i = gm.totalkeys; i >= 0; i--) {
 			var tile = $('.tile').eq(i);
@@ -577,6 +638,7 @@ function draw  (argument) {
 	
 
 	function lowerlife () {
+		console.log('lower');
 		$('.life.full').eq(0).removeClass('full');
 		if ($('.life.full').length === 0) {
 			gm.resetgame();
@@ -669,6 +731,7 @@ function draw  (argument) {
 
 
 	function resetcodes() {
+		console.log('reset code');
 
 	// ██████╗ ███████╗███████╗███████╗████████╗    ██╗  ██╗███████╗██╗   ██╗███████╗
 	// ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝    ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝
@@ -679,18 +742,16 @@ function draw  (argument) {
 	                                                                              
 		// this color from list and remove any remaining colors from tiles. add color class to player-----------------------------------------------
 
-		var newcolor = _.random( 0, gm.playercolors );
 		
+		var setkey = setkey;
+		// var animatekey = animatekey;
+		var newcolor = _.random( 0, gm.playercolors );
 		var direction = gm.directions[_.random(0,3)],
 			//select a direction at random 
 			keytochange = gm.keys[ direction ],
 			//swap the code for the direction with a random code from the key array - > gm.keycodes
 			randomkeyindex =  _.random(0,gm.keycodes.length - 1),
 			isrepeat = _.where(gm.keys, {letter: gm.keycodes[ randomkeyindex ].letter} || {code: gm.keycodes[ randomkeyindex ].code} );
-			console.log('isrepeat', isrepeat, gm.keys, gm.keycodes[ randomkeyindex ].letter, gm.keycodes[ randomkeyindex ].code);
-
-		var setkey = setkey;
-
 
 		for (var i = 0; i < gm.playercolors + 1; i++) {
 			$('.gamewrapper').removeClass('set'+i);
@@ -701,25 +762,39 @@ function draw  (argument) {
 		};
 
 		gm.lastcolor =  newcolor;
-
 		$('.gamewrapper').addClass('set'+newcolor);
-
-
-		
 		setkey();
 
 		// this resets intval for new code switch
 
 		gm.resetkeyint = gm.resetkeyint + gm.blockspeed + 300;
 
-		_.each(gm.directions, function(o,i){
-			$('.tile .inner .text.'+o).html(gm.keys[o].letter);
-		})
+		
+		for (var i = 0; i < 50; i++) {	
+			setTimeout(function() {
+				if (i > 50) {
+					var randomletter = gm.keycodes[  _.random( 0, gm.keycodes.length - 1) ].letter;
+					$('.tile .inner .text.'+direction).html(randomletter)
+				}else{
+					console.log('t1est');
+					_.each(gm.directions, function(o,i){
+						$('.tile .inner .text.'+o).html(gm.keys[o].letter);
+					})
+				}
+			}, 10*i)			
+		}
+
+		
+
 
 		$('.tile .inner .text.'+direction).addClass("glitch")
 		setTimeout(function() {
 			$('.tile .inner .text.'+direction).removeClass("glitch")
 		}, 1000);
+
+		// function animatekey(key) {
+		// 	keytochange
+		// }
 
 		function setkey(){
 			// this checks if the new code is being used

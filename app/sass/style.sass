@@ -75,7 +75,7 @@ body
 // Colors
 // **************
 
-$player-colors: (('set0', #297130 , #65F473),('set1', #FF5555 , invert(#FF5555)),('set2', #FF2400 , invert(#FF2400)),('set3', #00AAAA , #AA00AA),('set4', #AA00AA , invert(#AA00AA)),('set5', #AAAAAA , #00AAAA),('set6', #AAAAAA , #AA0000),('set7', #0000FF , #FF00FF),('set8', #BFCE72 , #1A8226),('set9', #0B300E , #65F473),('set10', #65F473 , #0B300E),('set11', #55FFFF , #FF5555),('set12', #0B300E , #297130),('set13', #FF5555 , #55FFFF),('set14', #6D6D48 , #FFDA91),('set15', #FF00FF , invert(#FF00FF)),('set16', #00FF00 , invert(#00FF00)),('set17', invert(#BFCE72) , #BFCE72),('set18', invert(#AA5FB6) , #AA5FB6),('set20', invert(#FF00FF) , #FF00FF),('set21', invert(#55FF55) , #55FF55),('set22', invert(#6D6D48) , #6D6D48),('set23', invert(#FF5555) , #FF5555))
+$player-colors: (('set0', #297130 , #65F473),('set1', #FF5555 , invert(#FF5555)),('set2', #FF2400 , invert(#FF2400)),('set3', #00AAAA , #AA00AA),('set4', #AA00AA , invert(#AA00AA)),('set5', invert(#00AAAA) , #00AAAA),('set6', invert(#AA0000) , #AA0000),('set7', #0000FF , #FF00FF),('set8', #BFCE72 , #1A8226),('set9', #0B300E , #65F473),('set10', #65F473 , #0B300E),('set11', #55FFFF , #FF5555),('set12', #0B300E , #297130),('set13', #FF5555 , #55FFFF),('set14', #6D6D48 , #FFDA91),('set15', #FF00FF , invert(#FF00FF)),('set16', #00FF00 , invert(#00FF00)),('set17', invert(#BFCE72) , #BFCE72),('set18', invert(#AA5FB6) , #AA5FB6),('set19', invert(#55FF55) , #55FF55),('set20', invert(#6D6D48) , #6D6D48),('set21', invert(#FF5555) , #FF5555))
 $burl: 'ftp://ftp.jdpa.ca/design/b'
 $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 
@@ -156,6 +156,9 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 
 // **************
 
+#soundtrack, #noise
+	display: none
+
 .gamewrapper
 	display: flex
 	width: calc(92.5vh)
@@ -185,7 +188,7 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 			.overlay
 				background-color: transparent
 				color: $fg !important
-				.start,.end
+				.start,.end,.infobox
 					background-color: $bg
 					border: 1px solid $fg
 					// width: 80%
@@ -267,8 +270,28 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 			width: 100vw
 		&.fadeout
 			@include animation('fadeout 500ms 1')
+		.menu
+			top: 0px
+			left: 0px
+			width: 100%
+			position: absolute
+			display: flex
+			justify-content: space-between
+			padding: 20px 2.75vh
+			z-index: 3
+			#info,#mute
+				width: 20px
+				height: 20px
+				cursor: pointer
+				font-size: 20px
+			#info
+				border-radius: 100%
+				// padding: .25vh
+				text-align: center
+				border: 2px solid
 
-		.start,.end
+
+		.start,.end,.infobox
 			width: 60%
 			margin: 0 auto
 			position: relative
