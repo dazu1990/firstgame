@@ -217,26 +217,18 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 						&.#{$bs}
 							background-color: lighten($bg,$percent)
 							&.upper
-								background: linear-gradient(to top, $bg 0%, #000 100%) 
+								background: linear-gradient(to top, lighten($bg,$percent) 0%, #000 70%) 
 							&.lower
-								background: linear-gradient(to bottom, lighten($bg,$percent) 0%, #000 100%) 
+								background: linear-gradient(to bottom, lighten($bg,$percent) 0%, #000 70%) 
 								// border-bottom: 1px solid $fg
 							&.lifepoint
 								.inner
-									background-color: transparent
-									// background-color: $fg
-									// @include animation('lifefill 2000ms infinite')
-									// @include lifefill($fg)
-									// @include textGlitch("glitch", 30, $fg, $bg, complement( $fg ), invert($fg), 450, 115)
-									&:before,
-									&:after 
-										background-color: $fg
-									// border-bottom: 2vh solid $fg
-									// border-top: 2vh solid $fg
-									// border-left: 2vh solid $bg
-									// border-right: 2vh solid $bg
+									// border: 2px solid $fg
+									color: $fg
 									
 						.inner
+							.point
+								color: $fg
 							.text
 								color: $fg
 								&.glitch
@@ -292,12 +284,14 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 				height: 20px
 				cursor: pointer
 				font-size: 20px
-			#score
-				margin: 0px
+			#allscores
+				margin: 0px !important
 				padding: 0px
+				font-size: 15px
 			#info
 				border-radius: 100%
 				// padding: .25vh
+				font-size: 14px
 				text-align: center
 				border: 2px solid
 
@@ -306,8 +300,10 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 			width: 60%
 			margin: 0 auto
 			position: relative
+			z-index: 1
 			padding: 40px 10px
 			display: none
+			top: 0px
 			@include breakpoint(small)
 				width: 60vw
 			&.active
@@ -320,6 +316,8 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 				font-size: 20px
 				@include breakpoint(small)
 					font-size: 16px
+		.infobox
+			z-index: 2
 	.lifebar
 		// height: 100vh
 		width: 2.5vh
@@ -358,21 +356,45 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 				display: flex
 				justify-content: center
 				align-items: center
+				
 				.inner
-					width: 2vh
-					height: 2vh
+					width: 90%
+					height: 90%
+					position: relative
+					// justify-content: center
+					// align-items: center
 					@include animation('onbeat 500ms infinite')
-					&:before,
-					&:after 
-						position: absolute
-						content: ""
-						left: 2vh
-						top: 0
-						width: 2vh
-						height: 4vh
-						border-radius: 50px 50px 0 0
-						transform: rotate(-45deg)
-						transform-origin: 0 100%
+					// width: 4vh
+					// height: 4vh
+					.text
+						position: relative
+						z-index: 1
+						width: 10vh
+						height: 10vh
+						top: 0px
+						left: 0px
+					.point
+						display: flex
+						justify-content: center
+						align-items: center
+						font-size: 14px
+						position: relative
+						z-index: 3
+						width: 10vh
+						height: 10vh
+						top: 0px
+						left: 0px
+					// &:before,
+					// &:after 
+					// 	position: absolute
+					// 	content: ""
+					// 	left: 2vh
+					// 	top: 0
+					// 	width: 2vh
+					// 	height: 4vh
+					// 	border-radius: 50px 50px 0 0
+					// 	transform: rotate(-45deg)
+					// 	transform-origin: 0 100%
 					
 					&:after
 						left: 0
@@ -407,6 +429,8 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 				display: flex
 				justify-content: center
 				align-content: center
+				.point
+					display: none
 				// &.point
 				// 	border-radius: 100%
 

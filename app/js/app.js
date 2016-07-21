@@ -34,6 +34,8 @@ gm={
     //gamescore
     score: 0,
     highscore: Number(JSON.parse(localStorage.getItem("cybersprinterscore"))) || 0,
+    //noise player
+    noise: document.getElementById('noise'),
 	// number of colour schemes
 	playercolors: 21,
 	lastcolor: "",
@@ -64,6 +66,7 @@ gm={
 	draw: draw,
 	resetgame: resetgame,
 	riselife: riselife,
+	playsound: playsound
 }
 
 gm.init();
@@ -97,9 +100,15 @@ function init() {
        $('#highscore').html(gm.highscore); 
     };
 
-	$(".cntrlinput").keydown(function(o,i){
+	$(".cntrlinput").keypress(function(o,i){
 		// map inital player movement gm.keys to input
-		cntrlinput();
+		var letter = String.fromCharCode(event.which)
+		letter  = letter.toUpperCase();
+		if (runvaluechecks(letter)) {
+			cntrlinput(letter);
+		}else{
+			return false;
+		}
 		
 	})
 
@@ -120,18 +129,19 @@ function init() {
 			console.log('test', previous);
 
 			
-			if ( $('.start').hasClass('active') && !previous) {
-				previous = 'start';
-			}else if( $('.end').hasClass('active') && !previous){
-				previous = 'end';
-			}
+			// if ( $('.start').hasClass('active') && !previous) {
+			// 	previous = 'start';
+			// }else if( $('.end').hasClass('active') && !previous){
+			// 	previous = 'end';
+			// }
 
 			$('.infobox').toggleClass('active')
-			if (previous) {
-				$('.'+previous).toggleClass('active')
-				// previous = false;
-			}
+			// if (previous) {
+			// 	$('.'+previous).toggleClass('active')
+			// 	// previous = false;
+			// }
 			if (gm.state !== 'pause') {
+				gm.playsound('pause');
 				prevstate = gm.state
 				gm.state = 'pause';
 			}else{
@@ -186,8 +196,12 @@ function init() {
 			if (i < (1 + gm.ymove)) {
 				tileclass = 'lower';
 			};
+			// if (i > (gm.totalkeys-9) && i < (gm.totalkeys + 1) ) {
+			// 	tileclass = 'upper';
+			// };
 			$('#grid').append('<li class="tile '+tileclass+'" id="tile'+i+
 				'"><div class="inner">'+
+					'<span class="point">+</span>'+
 					'<span class="text"></span>'+
 				'</div></li>');
 		};
@@ -264,47 +278,51 @@ function init() {
 		}
 
 	}
-	function cntrlinput(){
-		var letter = String.fromCharCode(event.which)
-		letter  = letter.toUpperCase();
-
-		if (values.length === 3) {
-			// on the last key stroke set the letter and start the game
-			// setvalue(letter);
-			if (runvaluechecks(letter)) {
-				setvalue(letter)
-				$('.starttext').addClass('glitch');
-				setTimeout(function() {
-					setlife();
-					$('.start').removeClass('active');
-					$('.overlay').addClass('fadeout');
-					setTimeout(function(){
-
-						//GAME STARTS HERE!!!!
-						gm.state = "play";
-						gm.resetgridint = gm.framecount + gm.blockspeed;
-						gm.resetkeyint = gm.framecount + gm.blockspeed + 300;
-						gm.droplife = gm.framecount +  200;
-
-						gm.moveplayer();
-					},1000)
-				}, 800);
+	function cntrlinput(letter){
+		
+			if (values.length === 3) {
+				// on the last key stroke set the letter and start the game
+				// setvalue(letter);
+				
+					setvalue(letter)
+					$('.starttext').addClass('glitch');
+	
+					setTimeout(function() {
+	
+						setlife();
+						$('.start').removeClass('active');
+						$('.overlay').addClass('fadeout');
+	
+						setTimeout(function(){
+	
+							//GAME STARTS HERE!!!!
+							setTimeout(function () {
+								gm.state = "play";
+								
+								gm.resetgridint = gm.framecount + gm.blockspeed;
+								gm.resetkeyint = gm.framecount + gm.blockspeed + 300;
+								gm.droplife = gm.framecount +  200;
+							}, 1500)
+							
+	
+							gm.moveplayer();
+						},1000)
+					}, 800);
+				
+				
+			    // return false;
 			}else{
-				return false;
-			}
-			
-		    // return false;
-		}else{
-			
-			// if input passes checks add value to keycodes
-			if (runvaluechecks(letter)) {
+				
+				// if input passes checks add value to keycodes
 				setvalue(letter)
-			}else{
-				return false;
+
+		
 			}
-		}
+		
 	}
 	function setlife () {
+		//play soundeffect
+		gm.playsound('startup');
 		var setdelay = function(i){
 			setTimeout(function(){
 				$('#life'+i).addClass('full')
@@ -324,22 +342,25 @@ function init() {
 				if ( event.which == gm.keys.up.code  ) {
 					gm.keys.up.press = true;
 					// event.preventDefault();
-				}
-				//A down
-				if ( event.which == gm.keys.down.code  ) {
+				}else if ( event.which == gm.keys.down.code  ) {
+					//down
 					gm.keys.down.press = true;
 					// event.preventDefault();
-				}
-				//S left 
-				if ( event.which == gm.keys.left.code ) {
+				}else if ( event.which == gm.keys.left.code ) {
+					// left 
 					gm.keys.left.press = true;
 					// event.preventDefault();
-				}
-				//D right
-				if ( event.which == gm.keys.right.code  ) {
+				}else if ( event.which == gm.keys.right.code  ) {
+					//right
 					gm.keys.right.press = true;
 					// event.preventDefault();
+				}else{
+					//if wrongkey
+					// gm.playsound('blocker');
+
 				}
+
+
 			};
 			
 		});
@@ -352,33 +373,39 @@ function init() {
 					gm.moveplayer('up');
 
 					// event.preventDefault();
-				}
-				//A down
-				if ( event.which == gm.keys.down.code ) {
+				}else if ( event.which == gm.keys.down.code ) {
 					gm.keys.down.press = false;
 					gm.moveplayer('down');
 
 					// event.preventDefault();
-				}
-				//S left 
-				if ( event.which == gm.keys.left.code ) {
+				}else if ( event.which == gm.keys.left.code ) {
 					gm.keys.left.press = false;
 					gm.moveplayer('left');
 
 					// event.preventDefault();
-				}
-				//D right
-				if ( event.which == gm.keys.right.code ) {
+				}else if ( event.which == gm.keys.right.code ) {
 					gm.keys.right.press = false;
 					gm.moveplayer('right');
 					// event.preventDefault();
+				}else {
+					//if wrongkey
+					gm.playsound('blocker');
 				}
 			};
 		});
 	};
 };
 
-function moveplayer(direction) {
+function playsound(id) {
+	
+	gm.noise.src = 'assets/'+id+'.mp3';
+	gm.noise.play();
+	// gm.noise.load();
+	// gm.noise.autoplay = true;
+	
+}
+
+function moveplayer(direction, force) {
     var resetxlimit = resetxlimit;
 
     // ███╗   ███╗ ██████╗ ██╗   ██╗███████╗    ██████╗ ██╗      █████╗ ██╗   ██╗███████╗██████╗ 
@@ -404,7 +431,11 @@ function moveplayer(direction) {
                 }
                 break;
             case 'down':
-                if (newpos < (gm.totalkeys - 9)) {
+            	var downborder = (gm.ymove*2);
+            	if (force) {
+            		downborder = 0;
+            	}
+                if (newpos < (gm.totalkeys - downborder)) {
                     newpos += gm.ymove;
                 } else {
                     gm.cntrlpos.down = false;
@@ -447,6 +478,7 @@ function moveplayer(direction) {
         } else {
 
             $('.player').addClass('bump-' + direction)
+            gm.playsound('blocker');
             setTimeout(function() {
                 $('.player').removeClass('bump-' + direction)
             }, 200);
@@ -527,6 +559,7 @@ function drawcntrls() {
 
 function riselife() {
     // console.log('riselife!', $('.life').not('.life.full').last())
+    gm.playsound('lifepoint');
     $('.life').not('.life.full').last().addClass('full');
     $('.player').removeClass('lifepoint');
 
@@ -599,6 +632,9 @@ function resetgame() {
     $('.overlay').removeClass('fadeout');
     $('.end').addClass('active');
     gm.state = 'pause';
+    //play soundeffect
+    gm.playsound('endscreen');
+
 
     setTimeout(function() {
         $('.overlay').addClass('fadeout');
@@ -631,9 +667,9 @@ function draw  (argument) {
 
 	if (gm.framecount === gm.resetgridint && gm.state === "play") {
 		movegrid();
-		cyclebg();
+		// cyclebg();
 	}else if(gm.framecount === gm.resetgridint ){
-		cyclebg();
+		// cyclebg();
 	}
 
 	function drawlifepoint () {
@@ -646,7 +682,7 @@ function draw  (argument) {
 		}
 		
 
-		for (var i = gm.totalkeys; i >= 0; i--) {
+		for (var i = (gm.totalkeys - gm.ymove * 2); i >= 0; i--) {
 			var tile = $('.tile').eq(i);
 			if (!tile.hasClass('blocker') && !tile.hasClass('player') && !tile.hasClass('lifpoint')) {
 				nonblockers.push(i)
@@ -658,9 +694,9 @@ function draw  (argument) {
 	}
 
 	
-
 	function lowerlife () {
-		console.log('lower');
+		// console.log('lower');
+		gm.playsound('lowerlife');
 		$('.life.full').eq(0).removeClass('full');
 		if ($('.life.full').length === 0) {
 			gm.resetgame();
@@ -721,9 +757,9 @@ function draw  (argument) {
 		}
 		if ( $('.player.blocker').length > 0 ) {
 			//when a player is blocked they get pushed down one row
-			gm.moveplayer("down");
+			gm.moveplayer("down", true);
 
-			if (gm.playerpos > (gm.totalkeys - gm.ymove)) {
+			if (gm.playerpos > (gm.totalkeys - (gm.ymove * 2))) {
 				gm.resetgame();
 			};
 		}
@@ -790,8 +826,9 @@ function draw  (argument) {
 		// this resets intval for new code switch
 
 		gm.resetkeyint = gm.resetkeyint + gm.blockspeed + 300;
+		//play soundeffect
+		gm.playsound('mixup');
 
-		
 		for (var i = 0; i < 50; i++) { 
             if (i < 49) {
                 
