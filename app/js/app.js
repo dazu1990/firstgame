@@ -2,6 +2,7 @@
 // - assume we've got jQuery to hand
 var $player;
 var frameRunner = new heliosFrameRunner();
+console.log('test');
 // var cachedscore = JSON.parse(localStorage.getItem("names"));
 
 
@@ -126,7 +127,6 @@ function init() {
 
 		
 		$('#info').click(function(){
-			console.log('test', previous);
 
 			
 			// if ( $('.start').hasClass('active') && !previous) {
@@ -196,9 +196,9 @@ function init() {
 			if (i < (1 + gm.ymove)) {
 				tileclass = 'lower';
 			};
-			// if (i > (gm.totalkeys-9) && i < (gm.totalkeys + 1) ) {
-			// 	tileclass = 'upper';
-			// };
+			if (i > (gm.totalkeys-9) && i < (gm.totalkeys + 1) ) {
+				tileclass = 'upper';
+			};
 			$('#grid').append('<li class="tile '+tileclass+'" id="tile'+i+
 				'"><div class="inner">'+
 					'<span class="point">+</span>'+
@@ -558,7 +558,6 @@ function drawcntrls() {
 };
 
 function riselife() {
-    // console.log('riselife!', $('.life').not('.life.full').last())
     gm.playsound('lifepoint');
     $('.life').not('.life.full').last().addClass('full');
     $('.player').removeClass('lifepoint');
@@ -658,6 +657,7 @@ function draw  (argument) {
 
 	if (gm.framecount >= gm.droplife && gm.state === "play" && gm.framecount > 500) {
 		lowerlife();
+
 	};
 
 	if (gm.framecount >= gm.resetkeyint && gm.state === "play") {
@@ -665,12 +665,20 @@ function draw  (argument) {
 		drawlifepoint();
 	};
 
-	if (gm.framecount === gm.resetgridint && gm.state === "play") {
+	// if (gm.state === "play" && ) {
+	// 	movegrid();
+	// }
+	if (gm.framecount > gm.resetgridint && gm.state === "play") {
 		movegrid();
+		cyclebg();
+
 		// cyclebg();
 	}else if(gm.framecount === gm.resetgridint ){
-		// cyclebg();
+		movegrid();
+
+		cyclebg();
 	}
+
 
 	function drawlifepoint () {
 		// console.log('running drawlifepoint', $('.lifepoint').length)
@@ -719,6 +727,7 @@ function draw  (argument) {
 	};
 
 	function movegrid() {
+		console.log('movegrid down');
 		var ispastmid = false;
 		var movedown = movedown;
 
