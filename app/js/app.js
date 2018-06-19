@@ -196,9 +196,9 @@ function init() {
 			if (i < (1 + gm.ymove)) {
 				tileclass = 'lower';
 			};
-			if (i > (gm.totalkeys-9) && i < (gm.totalkeys + 1) ) {
-				tileclass = 'upper';
-			};
+			// if (i > (gm.totalkeys-9) && i < (gm.totalkeys + 1) ) {
+			// 	tileclass = 'upper';
+			// };
 			$('#grid').append('<li class="tile '+tileclass+'" id="tile'+i+
 				'"><div class="inner">'+
 					'<span class="point">+</span>'+
@@ -434,22 +434,23 @@ function moveplayer(direction, force) {
             	var downborder = (gm.ymove*2);
             	if (force) {
             		downborder = 0;
+
             	}
                 if (newpos < (gm.totalkeys - downborder)) {
                     newpos += gm.ymove;
-                } else {
-                    gm.cntrlpos.down = false;
+
+                }else{
+                    bumpplayer(direction);
                 }
+                
                 break;
             case 'left':
                 if (newpos > gm.playerxlimit.l) {
                     newpos--;
 
                 } else {
-                    setTimeout(function() {
-                        $('.player').removeClass('bump-' + direction)
-                    }, 200);
-                    gm.cntrlpos.left = false;
+                    bumpplayer(direction);
+
 
                 };
                 break;
@@ -459,11 +460,7 @@ function moveplayer(direction, force) {
 
                 } else {
 
-                    setTimeout(function() {
-                        $('.player').removeClass('bump-' + direction)
-                    }, 200);
-
-                    gm.cntrlpos.right = false;
+                    bumpplayer(direction);
                 }
                 break;
         }
@@ -477,12 +474,9 @@ function moveplayer(direction, force) {
 
         } else {
 
-            $('.player').addClass('bump-' + direction)
-            gm.playsound('blocker');
-            setTimeout(function() {
-                $('.player').removeClass('bump-' + direction)
-            }, 200);
-            gm.cntrlpos[direction] = false;
+
+
+            bumpplayer(direction);
 
         }
 
@@ -502,6 +496,15 @@ function moveplayer(direction, force) {
         gm.drawcntrls();
 
     };
+
+    function bumpplayer (direction) {
+    	$('.player').addClass('bump-' + direction)
+    	gm.playsound('blocker');
+    	setTimeout(function() {
+    	    $('.player').removeClass('bump-' + direction)
+    	}, 200);
+    	gm.cntrlpos[direction] = false; 
+    }
 
     function resetxlimit(pos) {
         // this makes sure that you can't move the player past the horizontal border of the grid
