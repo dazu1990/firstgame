@@ -93,7 +93,7 @@ function init() {
 
 	// set up array of key objects that have a letter and keycode
 	setkeycodes();
-
+	// setup grid
 	setgrid();
 
     if (gm.highscore) {
@@ -108,7 +108,6 @@ function init() {
 		letter  = letter.toUpperCase();
 		if (runvaluechecks(letter)) {
 			cntrlinput(letter);
-			console.log('test',values);
 		}else{
 			return false;
 		}
@@ -156,6 +155,7 @@ function init() {
 		soundtrack.volume = 0.075;
 
 		$('#mute').click(function(){
+			$(this).toggleClass('active');
 			soundtrack.muted = !soundtrack.muted;
 			// soundtrack.volume = 0;
 		})
@@ -642,7 +642,6 @@ function draw  (argument) {
 
 	if (gm.framecount >= gm.droplife && gm.state === "play" && gm.framecount > 500) {
 		lowerlife();
-
 	};
 
 	if (gm.framecount >= gm.resetkeyint && gm.state === "play") {
@@ -650,20 +649,13 @@ function draw  (argument) {
 		drawlifepoint();
 	};
 
-	// if (gm.state === "play" && ) {
-	// 	movegrid();
-	// }
-	if (gm.framecount > gm.resetgridint && gm.state === "play") {
+	
+	if (gm.framecount === gm.resetgridint && gm.state === "play") {
 		movegrid();
 		cyclebg();
-
-		// cyclebg();
-	}else if(gm.framecount === gm.resetgridint ){
-		// movegrid();
-
+	}else if(gm.framecount >= gm.resetgridint ){
 		cyclebg();
 	}
-
 
 	function drawlifepoint () {
 		// console.log('running drawlifepoint', $('.lifepoint').length)
