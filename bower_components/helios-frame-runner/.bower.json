@@ -1,0 +1,14 @@
+{
+  "name": "helios-frame-runner",
+  "homepage": "https://github.com/heliosdesign/helios-frame-runner",
+  "version": "3.0.1",
+  "_release": "3.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.0.1",
+    "commit": "61400ad144b13c95c0bdd912458e0f0b6788bf3e"
+  },
+  "_source": "https://github.com/heliosdesign/helios-frame-runner.git",
+  "_target": "*",
+  "_originalSource": "helios-frame-runner"
+}

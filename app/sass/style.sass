@@ -281,7 +281,7 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 			justify-content: space-between
 			padding: 20px 2.75vh
 			z-index: 3
-			#info,#mute
+			.info,#mute
 				width: 20px
 				height: 20px
 				cursor: pointer
@@ -290,7 +290,7 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 				margin: 0px !important
 				padding: 0px
 				font-size: 15px
-			#info
+			.info
 				border-radius: 100%
 				// padding: .25vh
 				font-size: 14px
@@ -369,12 +369,13 @@ $blocker-states: (('ba',0%),('bb',1%),('bc',2%),('bd',3%),('be',4%))
 					// width: 4vh
 					// height: 4vh
 					.text
-						position: relative
+						position: absolute
 						z-index: 1
 						width: 10vh
 						height: 10vh
-						top: 0px
-						left: 0px
+						// top: 0px
+						// left: 0px
+
 					.point
 						display: flex
 						justify-content: center

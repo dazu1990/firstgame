@@ -2,7 +2,6 @@
 // - assume we've got jQuery to hand
 var $player;
 var frameRunner = new heliosFrameRunner();
-console.log('test');
 // var cachedscore = JSON.parse(localStorage.getItem("names"));
 
 
@@ -34,7 +33,7 @@ gm={
 	lifepoints: [],
     //gamescore
     score: 0,
-    highscore: Number(JSON.parse(localStorage.getItem("cybersprinterscore"))) || 0,
+    highscore: Number(JSON.parse(localStorage.getItem("dropblocksscore"))) || 0,
     //noise player
     noise: document.getElementById('noise'),
 	// number of colour schemes
@@ -66,7 +65,7 @@ gm={
 	drawcntrls: drawcntrls,
 	draw: draw,
 	resetgame: resetgame,
-	riselife: riselife,
+	raiselife: raiselife,
 	playsound: playsound
 }
 
@@ -107,6 +106,7 @@ function init() {
 		letter  = letter.toUpperCase();
 		if (runvaluechecks(letter)) {
 			cntrlinput(letter);
+			console.log('test',values);
 		}else{
 			return false;
 		}
@@ -126,20 +126,10 @@ function init() {
 		var prevstate = false;
 
 		
-		$('#info').click(function(){
-
-			
-			// if ( $('.start').hasClass('active') && !previous) {
-			// 	previous = 'start';
-			// }else if( $('.end').hasClass('active') && !previous){
-			// 	previous = 'end';
-			// }
-
+		$('.info').click(function(){
+			// show info
 			$('.infobox').toggleClass('active')
-			// if (previous) {
-			// 	$('.'+previous).toggleClass('active')
-			// 	// previous = false;
-			// }
+			// pause game
 			if (gm.state !== 'pause') {
 				gm.playsound('pause');
 				prevstate = gm.state
@@ -164,7 +154,6 @@ function init() {
 		soundtrack.volume = 0.075;
 
 		$('#mute').click(function(){
-			console.log('test');
 			soundtrack.muted = !soundtrack.muted;
 			// soundtrack.volume = 0;
 		})
@@ -279,13 +268,16 @@ function init() {
 
 	}
 	function cntrlinput(letter){
+		console.log(values, values.length);
 		
-			if (values.length === 3) {
+			if (values.length == 3) {
 				// on the last key stroke set the letter and start the game
 				// setvalue(letter);
 				
 					setvalue(letter)
 					$('.starttext').addClass('glitch');
+					gm.state = "play";
+
 	
 					setTimeout(function() {
 	
@@ -297,7 +289,6 @@ function init() {
 	
 							//GAME STARTS HERE!!!!
 							setTimeout(function () {
-								gm.state = "play";
 								
 								gm.resetgridint = gm.framecount + gm.blockspeed;
 								gm.resetkeyint = gm.framecount + gm.blockspeed + 300;
@@ -312,6 +303,7 @@ function init() {
 				
 			    // return false;
 			}else{
+
 				
 				// if input passes checks add value to keycodes
 				setvalue(letter)
@@ -434,11 +426,9 @@ function moveplayer(direction, force) {
             	var downborder = (gm.ymove*2);
             	if (force) {
             		downborder = 0;
-
             	}
                 if (newpos < (gm.totalkeys - downborder)) {
                     newpos += gm.ymove;
-
                 }else{
                     bumpplayer(direction);
                 }
@@ -447,19 +437,14 @@ function moveplayer(direction, force) {
             case 'left':
                 if (newpos > gm.playerxlimit.l) {
                     newpos--;
-
                 } else {
                     bumpplayer(direction);
-
-
                 };
                 break;
             case 'right':
                 if (newpos < gm.playerxlimit.r) {
                     newpos++;
-
                 } else {
-
                     bumpplayer(direction);
                 }
                 break;
@@ -469,15 +454,10 @@ function moveplayer(direction, force) {
         if (!$('.tile').eq(newpos).hasClass('blocker')) {
 
             gm.playerpos = newpos;
-
             resetxlimit(newpos);
 
         } else {
-
-
-
             bumpplayer(direction);
-
         }
 
         $('.player').removeClass('player')
@@ -489,8 +469,7 @@ function moveplayer(direction, force) {
 
         //if tile player is moving to has a lifepoint, add to the life bar
         if ($('.player').hasClass('lifepoint')) {
-            // console.log('firing')
-            gm.riselife();
+            gm.raiselife();
         }
 
         gm.drawcntrls();
@@ -498,6 +477,7 @@ function moveplayer(direction, force) {
     };
 
     function bumpplayer (direction) {
+    	// make the bump nope animation and sound
     	$('.player').addClass('bump-' + direction)
     	gm.playsound('blocker');
     	setTimeout(function() {
@@ -560,16 +540,16 @@ function drawcntrls() {
 
 };
 
-function riselife() {
+function raiselife() {
+	//gain a life point
     gm.playsound('lifepoint');
     $('.life').not('.life.full').last().addClass('full');
     $('.player').removeClass('lifepoint');
-
+    //raise score and store it
     gm.score ++;
-    console.log(gm.score, gm.highscore);
     if ( gm.score >= gm.highscore) {
         gm.highscore = gm.score;
-        localStorage.setItem("cybersprinterscore", JSON.stringify(gm.score));
+        localStorage.setItem("dropblocksscore", JSON.stringify(gm.score));
         $('#highscore').html(gm.score);
 
     };
@@ -677,7 +657,7 @@ function draw  (argument) {
 
 		// cyclebg();
 	}else if(gm.framecount === gm.resetgridint ){
-		movegrid();
+		// movegrid();
 
 		cyclebg();
 	}
@@ -730,7 +710,6 @@ function draw  (argument) {
 	};
 
 	function movegrid() {
-		console.log('movegrid down');
 		var ispastmid = false;
 		var movedown = movedown;
 
@@ -801,7 +780,6 @@ function draw  (argument) {
 
 
 	function resetcodes() {
-		console.log('reset code');
 
 	// ██████╗ ███████╗███████╗███████╗████████╗    ██╗  ██╗███████╗██╗   ██╗███████╗
 	// ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝    ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝
@@ -850,7 +828,6 @@ function draw  (argument) {
                 }, 10*i)  
             }else{
                 setTimeout(function() {
-                    console.log('t1est');
                     _.each(gm.directions, function(o,i){
                         $('.tile .inner .text.'+o).html(gm.keys[o].letter);
                     })
