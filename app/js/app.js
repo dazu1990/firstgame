@@ -100,6 +100,8 @@ function init() {
        $('#highscore').html(gm.highscore); 
     };
 
+    $(".cntrlinput").focus();
+
 	$(".cntrlinput").keypress(function(o,i){
 		// map inital player movement gm.keys to input
 		var letter = String.fromCharCode(event.which)
