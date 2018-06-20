@@ -10,6 +10,7 @@ var frameRunner = new heliosFrameRunner();
 gm={
 	state: "intro",
 	framecount: 0,
+	gametime: 0,
 	//this is speed of code change
 	resetkeyint: 200,
 	//this is speed of life loss
@@ -638,9 +639,12 @@ function draw  (argument) {
 		movegrid = movegrid;
 
 
+	if (gm.state === "play" ) {
+		gm.gametime++;
+	}
 	gm.framecount = frameRunner.frameCount();
 
-	if (gm.framecount >= gm.droplife && gm.state === "play" && gm.framecount > 500) {
+	if (gm.framecount >= gm.droplife && gm.state === "play" && gm.gametime > 500) {
 		lowerlife();
 	};
 
@@ -684,9 +688,11 @@ function draw  (argument) {
 		gm.playsound('lowerlife');
 		$('.life.full').eq(0).removeClass('full');
 		if ($('.life.full').length === 0) {
+			console.log('end game becuase low life');
 			gm.resetgame();
 		};
 		gm.droplife = gm.droplife + 200;
+		
 	}
 
 	function cyclebg(){
@@ -745,6 +751,7 @@ function draw  (argument) {
 			gm.moveplayer("down", true);
 
 			if (gm.playerpos > (gm.totalkeys - (gm.ymove * 2))) {
+				console.log('end game cause bumped out');
 				gm.resetgame();
 			};
 		}
